@@ -762,7 +762,7 @@ class World implements ChunkManager{
 				continue;
 			}
 			$block = $this->getBlock($vec);
-			$block->onScheduledUpdate();
+			$block->timed_onScheduledUpdate();
 		}
 
 		//Normal updates
@@ -779,7 +779,7 @@ class World implements ChunkManager{
 				foreach($this->getNearbyEntities(AxisAlignedBB::one()->offset($block->x, $block->y, $block->z)) as $entity){
 					$entity->onNearbyBlockChange();
 				}
-				$block->onNearbyBlockChange();
+				$block->timed_onNearbyBlockChange();
 			}
 			unset($this->neighbourBlockUpdateQueueIndex[$index]);
 		}
@@ -1006,7 +1006,7 @@ class World implements ChunkManager{
 								($Y << 4) + $y,
 								$chunkZ * 16 + $z
 							));
-							$block->onRandomTick();
+							$block->timed_onRandomTick();
 						}
 					}
 				}

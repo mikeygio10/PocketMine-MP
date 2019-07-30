@@ -66,6 +66,9 @@ class Block extends Position{
 	/** @var AxisAlignedBB[]|null */
 	protected $collisionBoxes = null;
 
+	/** @var BlockTimings */
+	public $timings;
+
 	/**
 	 * @param BlockIdentifier $idInfo
 	 * @param string          $name English name of the block type (TODO: implement translations)
@@ -78,6 +81,7 @@ class Block extends Position{
 		$this->idInfo = $idInfo;
 		$this->fallbackName = $name;
 		$this->breakInfo = $breakInfo;
+		$this->timings = new BlockTimings($this);
 	}
 
 	public function getIdInfo() : BlockIdentifier{
@@ -272,6 +276,10 @@ class Block extends Position{
 		return true;
 	}
 
+	public function timed_onNearbyBlockChange() : void{
+		$this->timings->nearbyUpdate->time(\Closure::fromCallable([$this, 'onNearbyBlockChange']));
+	}
+
 	/**
 	 * Called when this block or a block immediately adjacent to it changes state.
 	 */
@@ -288,12 +296,20 @@ class Block extends Position{
 		return false;
 	}
 
+	public function timed_onRandomTick() : void{
+		$this->timings->randomUpdate->time(\Closure::fromCallable([$this, 'onRandomTick']));
+	}
+
 	/**
 	 * Called when this block is randomly updated due to chunk ticking.
 	 * WARNING: This will not be called if ticksRandomly() does not return true!
 	 */
 	public function onRandomTick() : void{
 
+	}
+
+	public function timed_onScheduledUpdate() : void{
+		$this->timings->scheduledUpdate->time(\Closure::fromCallable([$this, 'onScheduledUpdate']));
 	}
 
 	/**
